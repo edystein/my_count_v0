@@ -149,12 +149,28 @@ class _HomePageState extends State<HomePage> {
         Text(
             'Button tapped $_counter time${_counter == 1 ? '' : 's'}. \n\nDEBUG\n'),
         SfCartesianChart(
-          title: ChartTitle(text: 'Sweet vs. Day Of Week'),
+          title: ChartTitle(text: 'Sweet vs. Day Of Week Last Week'),
           legend: Legend(isVisible: true),
           series: <ChartSeries>[
             BarSeries<AggData, String>(
                 name: 'Day of week',
-                dataSource: getCountData(df = df),
+                dataSource: getCountData(df = df, nDays: 7),
+                xValueMapper: (AggData e, _) => e.period,
+                yValueMapper: (AggData e, _) => e.val,
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                dataLabelSettings: DataLabelSettings(isVisible: true),
+                enableTooltip: true)
+          ],
+          primaryXAxis: CategoryAxis(),
+          primaryYAxis: NumericAxis(),
+        ),
+        SfCartesianChart(
+          title: ChartTitle(text: 'Sweet vs. Day Of Week Last 4-Weeks'),
+          legend: Legend(isVisible: true),
+          series: <ChartSeries>[
+            BarSeries<AggData, String>(
+                name: 'Day of week',
+                dataSource: getCountData(df = df, nDays: 28),
                 xValueMapper: (AggData e, _) => e.period,
                 yValueMapper: (AggData e, _) => e.val,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -242,7 +258,7 @@ List<AggData> getDOWCount(list) {
 }
 
 List<AggData> getCountData(df,
-    [int nDays = 30, String event = 'Sweet', String aggType = 'dow']) {
+    {int nDays = 7, String event = 'Sweet', String aggType = 'dow'}) {
   DateTime now = DateTime.now();
 
   // filter by event type
